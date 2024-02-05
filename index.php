@@ -1,78 +1,96 @@
 <?php
 
-// charge et initialise les bibliothèques globales
-include_once 'data/DataAccess.php';
+    // charge et initialise les bibliothèques globales
+    include_once 'data/DataAccess.php';
 
-include_once 'control/Controllers.php';
-include_once 'control/Presenter.php';
+    include_once 'control/Controllers.php';
+    include_once 'control/Presenter.php';
 
-include_once 'service/AnnoncesChecking.php';
+    include_once 'service/AnnoncesChecking.php';
 
-include_once 'gui/Layout.php';
-include_once 'gui/ViewLogin.php';
-include_once 'gui/ViewAnnonces.php';
-include_once 'gui/ViewPost.php';
+    include_once 'gui/Layout.php';
+    include_once 'gui/ViewLogin.php';
+    include_once 'gui/ViewAnnonces.php';
+    include_once 'gui/ViewPost.php';
+    include_once 'gui/ViewSignin.php';
 
-use gui\{ViewLogin, ViewAnnonces, ViewPost, Layout};
-use control\{Controllers, Presenter};
-use data\DataAccess;
-use service\AnnoncesChecking;
+    use gui\{ViewLogin, ViewAnnonces, ViewPost, ViewSignin, Layout};
+    use control\{Controllers, Presenter};
+    use data\DataAccess;
+    use service\AnnoncesChecking;
 
-$data = null;
-try {
-    // construction du modèle
-    $data = new DataAccess( new PDO('mysql:host=mysql-xxxxxx.alwaysdata.net;dbname=xxxxxx_annonces_db', 'xxxxxx_annonces', 'xxxxxx_mdp') );
+    $data = null;
+    try {
+        // construction du modèle
+        $data = new DataAccess( new PDO('mysql:host=mysql-portelli.alwaysdata.net;dbname=portelli_annonces_db', 'portelli_annonce', '%Angelo13') );
 
-} catch (PDOException $e) {
-    print "Erreur de connexion !: " . $e->getMessage() . "<br/>";
-    die();
-}
+    } catch (PDOException $e) {
+        print "Erreur de connexion !: " . $e->getMessage() . "<br/>";
+        die();
+    }
 
-// initialisation du controller
-$controller = new Controllers();
+    // initialisation du controller
+    $controller = new Controllers();
 
-// intialisation du cas d'utilisation service\AnnoncesChecking
-$annoncesCheck = new AnnoncesChecking() ;
+    // intialisation du cas d'utilisation service\AnnoncesChecking
+    $annoncesCheck = new AnnoncesChecking() ;
 
-// intialisation du presenter avec accès aux données de AnnoncesCheking
-$presenter = new Presenter($annoncesCheck);
+    // intialisation du presenter avec accès aux données de AnnoncesCheking
+    $presenter = new Presenter($annoncesCheck);
 
-// chemin de l'URL demandée au navigateur
-// (p.ex. /annonces/index.php)
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    // chemin de l'URL demandée au navigateur
+    // (p.ex. /annonces/index.php)
+    $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// route la requête en interne
-// i.e. lance le bon contrôleur en focntion de la requête effectuée
-if ( '/annonces/' == $uri || '/annonces/index.php' == $uri) {
+    // route la requête en interne
+    // i.e. lance le bon contrôleur en focntion de la requête effectuée
+    if ( '/annonces/' == $uri || '/annonces/index.php' == $uri) {
 
-    $layout = new Layout("gui/layout.html" );
-    $vueLogin = new ViewLogin( $layout );
+        $layout = new Layout("gui/layout.html" );
+        $vueLogin = new ViewLogin( $layout );
 
-    $vueLogin->display();
-}
-elseif ( '/annonces/index.php/annonces' == $uri
-            && isset($_POST['login']) && isset($_POST['password']) ){
+        $vueLogin->display();
+    }
+    else if ('/annonces/index.php/signin' == $uri) {
 
-    $controller->annoncesAction($_POST['login'], $_POST['password'], $data, $annoncesCheck);
+        $layout = new Layout("gui/layout.html" );
+        $vueLogin = new ViewSignin( $layout );
 
-    $layout = new Layout("gui/layout.html" );
-    $vueAnnonces= new ViewAnnonces( $layout, $_POST['login'], $presenter);
+        $vueLogin->display();
+    }
+    else if ('/annonces/index.php/register' == $uri) {
 
-    $vueAnnonces->display();
-}
-elseif ( '/annonces/index.php/post' == $uri
-            && isset($_GET['id'])) {
+        $controller->addUser($_POST['login'], $_POST['password'], $_POST['name'], $_POST['firstname'], $data);
 
-    $controller->postAction($_GET['id'], $data, $annoncesCheck);
+//        $layout = new Layout("gui/layout.html" );
+//        $vueLogin = new ViewSignin( $layout );
+//
+//        $vueLogin->display();
+    }
 
-    $layout = new Layout("gui/layout.html" );
-    $vuePost= new ViewPost( $layout, $presenter );
+    else if ( '/annonces/index.php/annonces' == $uri
+        && isset($_POST['login']) && isset($_POST['password']) ){
 
-    $vuePost->display();
-}
-else {
-    header('Status: 404 Not Found');
-    echo '<html><body><h1>My Page NotFound</h1></body></html>';
-}
+        $controller->annoncesAction($_POST['login'], $_POST['password'], $data, $annoncesCheck);
+
+        $layout = new Layout("gui/layout.html" );
+        $vueAnnonces= new ViewAnnonces( $layout, $_POST['login'], $presenter);
+
+        $vueAnnonces->display();
+    }
+    else if ( '/annonces/index.php/post' == $uri
+        && isset($_GET['id'])) {
+
+        $controller->postAction($_GET['id'], $data, $annoncesCheck);
+
+        $layout = new Layout("gui/layout.html" );
+        $vuePost= new ViewPost( $layout, $presenter );
+
+        $vuePost->display();
+    }
+    else {
+        header('Status: 404 Not Found');
+        echo '<html><body><h1>My Page NotFound</h1></body></html>';
+    }
 
 ?>

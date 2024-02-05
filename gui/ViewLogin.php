@@ -20,6 +20,7 @@ class ViewLogin extends View
                 <input type="password" name="password" id="password" maxlength="12" required />
         
                 <input type="submit" value="Envoyer">
-            </form>';
+            </form>
+            <a href="/annonces/index.php/signin">S\'inscrire</a>';
     }
 }

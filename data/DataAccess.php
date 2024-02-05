@@ -65,6 +65,16 @@ class DataAccess implements DataAccessInterface
 
         return $post;
     }
-}
 
-?>
+    public function addUser($login, $password, $name, $firstname) {
+        $date = date('Y-m-d');
+
+        $query = 'INSERT INTO Users (login, password, name, firstname, date) VALUES ("' . $login . '",
+                                                                                     "' . $password . '",
+                                                                                      "' . $name . '",
+                                                                                       "' . $firstname . '"),
+                                                                                        "' . $date . '")';
+
+        $this->dataAccess->query($query);
+    }
+}

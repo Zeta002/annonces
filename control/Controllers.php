@@ -13,4 +13,8 @@ class Controllers
     {
         $annoncesCheck->getPost($id, $data);
     }
+
+    public function addUser($login, $password, $firstname, $name, $data) {
+        $data->addUser($login, $password, $firstname, $name);
+    }
 }
