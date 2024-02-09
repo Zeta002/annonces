@@ -1,31 +1,33 @@
 <?php
+
 namespace gui;
 
-include_once "View.php";
+include_once "gui/View.php";
 
 class ViewSignin extends View
 {
-    public function __construct($layout)
-    {
-        parent::__construct($layout);
+	public function __construct($layout)
+	{
+		parent::__construct($layout);
 
-        $this->title = 'Exemple Annonces Basic PHP: Connexion';
+		$this->title = 'Signin';
 
-        $this->content = '
+		$this->content = '
+			<h1>Inscription</h1>
             <form method="post" action="/annonces/index.php/register">
+            	<label for="name"> Votre nom </label> :
+                <input type="text" name="name" id="name" placeholder="Dupont" />
+                <br />
+            	<label for="firstname"> Votre prénom </label> :
+                <input type="text" name="firstname" id="firstname" placeholder="Jeremy" />
+                <br />
                 <label for="login"> Votre identifiant </label> :
-                <input type="text" name="login" id="login" placeholder="Jeremy" maxlength="20" required />
+                <input type="text" name="signin" id="signin" placeholder="jermerstar" />
                 <br />
                 <label for="password"> Votre mot de passe </label> :
-                <input type="password" name="password" id="password" maxlength="20" required />
-                
-                <label for="name"> Votre mot de passe </label> :
-                <input type="text" name="name" id="name" maxlength="20" required />
-                
-                <label for="firstname"> Votre mot de passe </label> :
-                <input type="text" name="firstname" id="firstname" maxlength="20" required />
+                <input type="password" name="password" placeholder="Ajdlz2491%" id="password" />
         
                 <input type="submit" value="Envoyer">
             </form>';
-    }
+	}
 }
